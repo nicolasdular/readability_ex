@@ -1,0 +1,4 @@
+[tools]
+erlang = "27.1"
+elixir = "1.18.3"
+rust = "stable"
