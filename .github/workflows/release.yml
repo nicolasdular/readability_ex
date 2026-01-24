@@ -20,10 +20,13 @@ jobs:
             target: x86_64-unknown-linux-gnu
           - runner: ubuntu-22.04
             target: x86_64-unknown-linux-musl
+            use-cross: true
           - runner: ubuntu-22.04
             target: aarch64-unknown-linux-gnu
+            use-cross: true
           - runner: ubuntu-22.04
             target: aarch64-unknown-linux-musl
+            use-cross: true
           - runner: macos-13
             target: x86_64-apple-darwin
           - runner: macos-14
@@ -32,6 +35,11 @@ jobs:
             target: x86_64-pc-windows-msvc
     steps:
       - uses: actions/checkout@v4
+      - name: Set project version
+        shell: bash
+        run: |
+          version="${GITHUB_REF_NAME#v}"
+          echo "PROJECT_VERSION=${version}" >> "$GITHUB_ENV"
       - uses: erlef/setup-beam@v1
         with:
           elixir-version: "1.18.3"
@@ -39,13 +47,19 @@ jobs:
       - uses: dtolnay/rust-toolchain@stable
         with:
           targets: ${{ matrix.target }}
-      - uses: philss/rustler-precompiled-action@v1
+      - uses: philss/rustler-precompiled-action@v1.1.4
+        id: build
         with:
           project-name: readability_ex
-          project-version: ${{ github.ref_name }}
+          project-version: ${{ env.PROJECT_VERSION }}
           target: ${{ matrix.target }}
-          artifact-name: "libreadability_ex-${{ github.ref_name }}-nif-2.15-${{ matrix.target }}.so.tar.gz"
-          working-directory: native/readability_ex
+          nif-version: "2.15"
+          use-cross: ${{ matrix.use-cross || false }}
+          project-dir: "native/readability_ex"
+      - name: Upload release assets
+        uses: softprops/action-gh-release@v1
+        with:
+          files: ${{ steps.build.outputs.file-path }}
 
   checksum:
     name: Generate checksum
