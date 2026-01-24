@@ -18,25 +18,29 @@ jobs:
         include:
           - runner: ubuntu-22.04
             target: x86_64-unknown-linux-gnu
+            builder: action
             use-cross: false
           - runner: ubuntu-22.04
             target: x86_64-unknown-linux-musl
+            builder: action
             use-cross: true
           - runner: ubuntu-22.04
             target: aarch64-unknown-linux-gnu
-            use-cross: false
+            builder: action
+            use-cross: true
           - runner: ubuntu-22.04
             target: aarch64-unknown-linux-musl
+            builder: action
             use-cross: true
-          - runner: macos-13
+          - runner: macos-15-intel
             target: x86_64-apple-darwin
-            use-cross: false
+            builder: manual
           - runner: macos-14
             target: aarch64-apple-darwin
-            use-cross: false
+            builder: manual
           - runner: windows-2022
             target: x86_64-pc-windows-msvc
-            use-cross: false
+            builder: manual
     steps:
       - uses: actions/checkout@v4
       - name: Set project version
@@ -57,6 +61,7 @@ jobs:
         with:
           targets: ${{ matrix.target }}
       - uses: philss/rustler-precompiled-action@v1.1.4
+        if: matrix.builder == 'action'
         id: build
         with:
           project-name: readability_ex
@@ -65,10 +70,63 @@ jobs:
           nif-version: "2.15"
           use-cross: ${{ matrix.use-cross }}
           project-dir: "native/readability_ex"
-      - name: Upload release assets
+      - name: Build NIF archive (macOS/Linux manual)
+        if: matrix.builder == 'manual' && runner.os != 'Windows'
+        shell: bash
+        working-directory: native/readability_ex
+        run: |
+          set -euo pipefail
+          project_name="readability_ex"
+          version="${PROJECT_VERSION}"
+          target="${{ matrix.target }}"
+
+          cargo build --release --target="${target}"
+
+          lib_prefix="lib"
+          lib_suffix=".so"
+          if [[ "${target}" == *"-apple-darwin" ]]; then
+            lib_suffix=".dylib"
+          fi
+
+          lib_name="${lib_prefix}${project_name}${lib_suffix}"
+          lib_path="target/${target}/release/${lib_name}"
+
+          final_suffix=".so"
+          final_name="${lib_prefix}${project_name}-v${version}-nif-2.15-${target}${final_suffix}"
+
+          cp "${lib_path}" "${final_name}"
+          tar -czf "${final_name}.tar.gz" "${final_name}"
+
+          echo "ARCHIVE_PATH=$(pwd)/${final_name}.tar.gz" >> "${GITHUB_ENV}"
+      - name: Build NIF archive (Windows manual)
+        if: matrix.builder == 'manual' && runner.os == 'Windows'
+        shell: pwsh
+        working-directory: native/readability_ex
+        run: |
+          $projectName = "readability_ex"
+          $version = $env:PROJECT_VERSION
+          $target = "${{ matrix.target }}"
+
+          cargo build --release --target $target
+
+          $libName = "$projectName.dll"
+          $libPath = "target/$target/release/$libName"
+          $finalName = "$projectName-v$version-nif-2.15-$target.dll"
+
+          Copy-Item $libPath $finalName
+          tar -czf "$finalName.tar.gz" $finalName
+
+          "ARCHIVE_PATH=$((Resolve-Path $finalName.tar.gz).Path)" | Out-File -FilePath $env:GITHUB_ENV -Append
+      - name: Upload release assets (action)
+        if: matrix.builder == 'action'
         uses: softprops/action-gh-release@v1
         with:
           files: ${{ steps.build.outputs.file-path }}
+      - name: Upload release assets (manual)
+        if: matrix.builder == 'manual'
+        uses: softprops/action-gh-release@v1
+        with:
+          files: ${{ env.ARCHIVE_PATH }}
 
   checksum:
     name: Generate checksum
