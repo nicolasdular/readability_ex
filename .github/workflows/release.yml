@@ -129,7 +129,7 @@ jobs:
           Copy-Item $libPath $finalName
           tar -czf "$finalName.tar.gz" $finalName
 
-          "ARCHIVE_PATH=$((Resolve-Path $finalName.tar.gz).Path)" | Out-File -FilePath $env:GITHUB_ENV -Append
+          "ARCHIVE_PATH=$((Resolve-Path "${finalName}.tar.gz").Path)" | Out-File -FilePath $env:GITHUB_ENV -Append
       - name: Upload release assets (action)
         if: matrix.builder == 'action'
         uses: softprops/action-gh-release@v1
