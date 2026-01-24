@@ -1,0 +1,12 @@
+[package]
+name = "readability_ex"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "readability_ex"
+crate-type = ["cdylib"]
+
+[dependencies]
+rustler = "0.29"
+readabilityrs = "0.1"

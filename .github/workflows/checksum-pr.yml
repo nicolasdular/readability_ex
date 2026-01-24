@@ -1,0 +1,32 @@
+name: Checksum PR
+
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  checksum:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: erlef/setup-beam@v1
+        with:
+          elixir-version: "1.18.3"
+          otp-version: "27.1"
+      - name: Generate checksum file
+        run: |
+          mix deps.get
+          mix rustler_precompiled.download Elixir.ReadabilityEx --all --print
+      - name: Create PR
+        uses: peter-evans/create-pull-request@v6
+        with:
+          branch: chore/checksum-${{ github.ref_name }}
+          commit-message: "Add checksum for ${{ github.ref_name }}"
+          title: "Add checksum for ${{ github.ref_name }}"
+          body: "Auto-generated checksum file for the ${{ github.ref_name }} release."

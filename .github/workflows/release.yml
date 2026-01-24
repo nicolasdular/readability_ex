@@ -1,0 +1,68 @@
+name: Release NIFs
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    name: Build ${{ matrix.target }}
+    runs-on: ${{ matrix.runner }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: ubuntu-22.04
+            target: x86_64-unknown-linux-gnu
+          - runner: ubuntu-22.04
+            target: x86_64-unknown-linux-musl
+          - runner: ubuntu-22.04
+            target: aarch64-unknown-linux-gnu
+          - runner: ubuntu-22.04
+            target: aarch64-unknown-linux-musl
+          - runner: macos-13
+            target: x86_64-apple-darwin
+          - runner: macos-14
+            target: aarch64-apple-darwin
+          - runner: windows-2022
+            target: x86_64-pc-windows-msvc
+    steps:
+      - uses: actions/checkout@v4
+      - uses: erlef/setup-beam@v1
+        with:
+          elixir-version: "1.18.3"
+          otp-version: "27.1"
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.target }}
+      - uses: philss/rustler-precompiled-action@v1
+        with:
+          project-name: readability_ex
+          project-version: ${{ github.ref_name }}
+          target: ${{ matrix.target }}
+          artifact-name: "libreadability_ex-${{ github.ref_name }}-nif-2.15-${{ matrix.target }}.so.tar.gz"
+          working-directory: native/readability_ex
+
+  checksum:
+    name: Generate checksum
+    needs: build
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: erlef/setup-beam@v1
+        with:
+          elixir-version: "1.18.3"
+          otp-version: "27.1"
+      - name: Download artifacts
+        run: |
+          mix deps.get
+          mix rustler_precompiled.download Elixir.ReadabilityEx --all --print
+      - name: Upload checksum
+        uses: actions/upload-artifact@v4
+        with:
+          name: checksum
+          path: checksum-Elixir.ReadabilityEx.exs
