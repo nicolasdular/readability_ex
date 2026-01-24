@@ -154,7 +154,8 @@ jobs:
       - name: Download artifacts
         run: |
           mix deps.get
-          mix rustler_precompiled.download Elixir.ReadabilityEx --all --print
+          mix compile --force
+          mix rustler_precompiled.download ReadabilityEx --all --print
       - name: Upload checksum
         uses: actions/upload-artifact@v4
         with:
