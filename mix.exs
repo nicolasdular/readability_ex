@@ -4,7 +4,7 @@ defmodule ReadabilityEx.MixProject do
   def project do
     [
       app: :readability_ex,
-      version: "0.1.7",
+      version: "0.1.8",
       elixir: "~> 1.18",
       config_path: "config/config.exs",
       start_permanent: Mix.env() == :prod,
