@@ -1,7 +1,7 @@
 use readabilityrs::{Readability, ReadabilityOptions};
 
 #[global_allocator]
-static GLOBAL: jemallocator::Jemalloc = jemallocator::Jemalloc;
+static GLOBAL: mimalloc::MiMalloc = mimalloc::MiMalloc;
 
 #[rustler::nif(schedule = "DirtyCpu")]
 fn extract_nif(html: String, url: Option<String>) -> Result<Option<String>, String> {
