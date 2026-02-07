@@ -1,5 +1,8 @@
 use readabilityrs::{Readability, ReadabilityOptions};
 
+#[global_allocator]
+static GLOBAL: jemallocator::Jemalloc = jemallocator::Jemalloc;
+
 #[rustler::nif(schedule = "DirtyCpu")]
 fn extract_nif(html: String, url: Option<String>) -> Result<Option<String>, String> {
     let options = ReadabilityOptions::default();
