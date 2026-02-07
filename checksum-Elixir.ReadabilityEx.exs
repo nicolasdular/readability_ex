@@ -1,8 +1,8 @@
 %{
-  "libreadability_ex-v0.1.11-nif-2.15-aarch64-apple-darwin.so.tar.gz" => "sha256:a3473698b470ece049d9b55764823412d8f53a5eb19671b8450b9d54991926d5",
-  "libreadability_ex-v0.1.11-nif-2.15-aarch64-unknown-linux-gnu.so.tar.gz" => "sha256:9dcb30000a29f92b41fea3d40c18ffeddb9fbcbc3c5aec050fab81b5d4c3da14",
-  "libreadability_ex-v0.1.11-nif-2.15-aarch64-unknown-linux-musl.so.tar.gz" => "sha256:7c985ca5e687fb7d4e20f778918ab3127ab436626bf9a09535572d7bfa7f3a8e",
-  "libreadability_ex-v0.1.11-nif-2.15-x86_64-apple-darwin.so.tar.gz" => "sha256:9ac49c25963c98be41188f8a8d336338b9a08e7a0dfeb6872123966be8b440d0",
-  "libreadability_ex-v0.1.11-nif-2.15-x86_64-unknown-linux-gnu.so.tar.gz" => "sha256:fade7bb14046ff2f194d0d241e2c0a055c01bc396dff2bbf2b74d4fcda323587",
-  "libreadability_ex-v0.1.11-nif-2.15-x86_64-unknown-linux-musl.so.tar.gz" => "sha256:4236f2a2394abcc1acddc3e0f7e66a1e6d17dce710ce641cea30d82025bf72c5",
+  "libreadability_ex-v0.1.11-nif-2.15-aarch64-apple-darwin.so.tar.gz" => "sha256:7ca01ffb2b932fedad1ffe1ffb9981427afa37d8df1757f9ac0bf45c2372040d",
+  "libreadability_ex-v0.1.11-nif-2.15-aarch64-unknown-linux-gnu.so.tar.gz" => "sha256:432490b896dc2be3e3f65ee6aeb8197f3324b0e6d9996acc73ccd5a2b212a36a",
+  "libreadability_ex-v0.1.11-nif-2.15-aarch64-unknown-linux-musl.so.tar.gz" => "sha256:a49bff39c5a002de6d8d71894c639e33ecbb8244a9812b91dfd51c5a35556a3c",
+  "libreadability_ex-v0.1.11-nif-2.15-x86_64-apple-darwin.so.tar.gz" => "sha256:2236c14e3f70bae4737137061259659aa99c5dae0783202a3aa04fbbedca389c",
+  "libreadability_ex-v0.1.11-nif-2.15-x86_64-unknown-linux-gnu.so.tar.gz" => "sha256:4a732b87ece9f4860a93eb16530834f609e7528a16cdc6235ed3bff32a4972fd",
+  "libreadability_ex-v0.1.11-nif-2.15-x86_64-unknown-linux-musl.so.tar.gz" => "sha256:af3cbf2621ed71e15c5c5bc01f19f2c3a67310080589be9a8ac9192ecca12893",
 }
